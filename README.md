@@ -105,7 +105,6 @@ python3 scripts/export_journal_figures.py
 ├── src/                  # 核心实现
 ├── scripts/              # 出图/可解释性/数据导出等脚本
 ├── docs/                 # 知识库与实现说明
-└── thesis_fixed.tex      # 论文 tex（本仓库保留但不作为运行依赖）
 ```
 
 ---
@@ -116,8 +115,3 @@ python3 scripts/export_journal_figures.py
 - 随机种子：数据生成模块默认 `np.random.seed(42)`（见 `src/data_generator.py`）
 - 运行产物默认被 `.gitignore` 忽略，可在本地复现生成
 
----
-
-## 8. License
-
-本仓库代码默认采用 MIT License（如你希望更换为学校/论文要求的许可证，可告诉我）。
