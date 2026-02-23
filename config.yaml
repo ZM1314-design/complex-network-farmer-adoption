@@ -1,0 +1,114 @@
+# 复杂网络农户采纳行为模型配置文件
+
+# 网络参数
+network:
+  num_farmers: 300  # 农户数量（平衡版：足够展示效果，又不太慢）
+  avg_degree: 8  # 平均度数
+  heterogeneity: 0.46  # 异质性参数
+  clustering: 0.03  # 聚类系数
+  hyperedge_ratio: 0.15  # 超边比例 (合作社等)
+  gamma: 2.5  # 度分布幂律指数
+  
+# 农户属性参数
+farmer:
+  economic_mean: 50000  # 经济水平均值
+  economic_std: 20000  # 经济水平标准差
+  education_levels: [0, 1, 2, 3]  # 教育程度 0-3
+  risk_tolerance_mean: 0.5  # 风险偏好均值
+  risk_tolerance_std: 0.2
+  env_awareness_mean: 0.5  # 环境意识均值
+  env_awareness_std: 0.25
+  myopia_range: [0.1, 0.9]  # 短视性范围 δ_i ~ U(0.1, 0.9)
+  # 新增维度参数
+  education_priority_base: 0.5  # 子女教育优先权基础值（会动态更新）
+  political_voice_base: 0.3  # 农民话语权基础值（会动态更新）
+
+# 耕地质量动力学参数
+quality_dynamics:
+  # 三个维度的质量参数（如果为标量，则三个维度使用相同参数）
+  alpha:  # 绿色施肥质量提升系数
+    fertility: 0.06  # 肥力提升率（较高，因为绿色施肥直接改善肥力）
+    soil_structure: 0.04  # 颗粒结构改善率（中等，需要时间积累）
+    biological_activity: 0.05  # 生物活性提升率（中等）
+  beta:  # 传统施肥退化系数
+    fertility: 0.09  # 肥力退化率（较高，传统施肥导致肥力下降）
+    soil_structure: 0.07  # 颗粒结构退化率（中等）
+    biological_activity: 0.08  # 生物活性退化率（较高，化学肥料抑制生物活性）
+  gamma:  # 自然退化率
+    fertility: 0.02  # 肥力自然衰减
+    soil_structure: 0.015  # 颗粒结构自然衰减（较慢）
+    biological_activity: 0.025  # 生物活性自然衰减（较快）
+  delta:  # 外部生态修复作用
+    fertility: 0.01  # 肥力外部输入（降雨、自然修复）
+    soil_structure: 0.008  # 颗粒结构外部输入（较慢）
+    biological_activity: 0.012  # 生物活性外部输入（较快）
+  diffusion:  # 扩散系数（邻居影响）
+    fertility: 0.1  # 肥力扩散
+    soil_structure: 0.08  # 颗粒结构扩散（较慢）
+    biological_activity: 0.12  # 生物活性扩散（较快，微生物传播）
+  # 初始质量值
+  initial_Q: 0.5  # 综合初始质量（向后兼容）
+  initial_fertility: 0.5  # 初始肥力
+  initial_soil_structure: 0.5  # 初始颗粒结构
+  initial_biological_activity: 0.5  # 初始生物活性
+  # 质量权重（用于计算综合质量）
+  quality_weights:
+    fertility: 0.4  # 肥力权重（最重要）
+    soil_structure: 0.3  # 颗粒结构权重
+    biological_activity: 0.3  # 生物活性权重
+
+# 政策参数
+policy:
+  subsidy_base: 105  # 基础补贴（现实校准：全国平均约 105 元/亩）
+  subsidy_range: [0, 500]  # 补贴范围（现实校准：全国最高通常为 500+ 元/亩量级）
+  cost_traditional: 800  # 传统施肥成本（元/亩）
+  cost_green: 1200  # 绿色施肥成本（元/亩）
+  training_coverage: 0.3  # 技术培训覆盖率
+
+# TPB决策参数（所有项单位均为"元"）
+decision:
+  theta_p0: 1.0  # 政策感知基础权重（无量纲）
+  theta_s0: 1.2  # 社会影响基础权重（无量纲）
+  theta_e: 0.8  # 经济成本权重（无量纲）
+  theta_q: 0.8  # 耕地质量权重（无量纲，现实校准后适当降低避免“一步到位全采纳”）
+  mu: 1.0  # 耦合参数
+  tau: 0.05  # Logit温度参数（现实校准：降低随机效用敏感度，使采纳曲线更平滑）
+  threshold: 0.6  # 采纳阈值
+  # 经济转换参数（用于将无量纲项转换为元）
+  social_value_base: 300.0  # 社会声誉基准价值（元/亩）：现实校准（降低从众货币化强度）
+  quality_value_base: 1500.0  # 质量收益基准价值（元/亩）：现实校准（质量=1时的年化增益量级）
+  
+# 强化学习参数
+rl:
+  hidden_dim: 64  # 减少网络复杂度（从128到64）加速训练
+  learning_rate: 0.001  # 提高学习率加速收敛
+  gamma: 0.99  # 折扣因子
+  epsilon_start: 1.0
+  epsilon_end: 0.05  # 保留更多探索
+  epsilon_decay: 0.99  # 更快衰减
+  batch_size: 128  # 增大批量（从64到128）提升效率
+  memory_size: 5000  # 减少内存占用
+  target_update: 5  # 更频繁更新
+  
+# 奖励函数权重
+reward:
+  lambda1: 0.3  # 经济效益权重
+  lambda2: 0.3  # 政策补贴权重
+  lambda3: 0.2  # 社会声誉权重
+  lambda4: 0.2  # 子女教育优先权权重
+  lambda5: 0.15  # 农民话语权（参政机会）权重
+
+# 仿真参数
+simulation:
+  num_episodes: 200  # 训练轮数（200轮，确保充分训练）
+  max_steps: 60  # 每轮最大步数
+  num_runs: 5  # 独立运行次数
+  save_interval: 10  # 保存间隔
+  
+# 输出路径
+output:
+  results_dir: ./results
+  figures_dir: ./figures
+  models_dir: ./models
+  logs_dir: ./logs
+
