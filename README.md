@@ -1,4 +1,4 @@
-# 复杂网络农户绿色施肥采纳仿真（Hyperbolic Network + TPB + Phase Transition + Multi-Agent DQN）
+# 复杂网络-农户绿色施肥采纳仿真（Hyperbolic Network + TPB + Phase Transition + Multi-Agent DQN）
 
 本仓库提供一个**可复现的端到端仿真框架**，用于研究绿色施肥技术在农户社交网络中的扩散机制，并支持：
 
@@ -70,8 +70,6 @@ python3 run_experiment.py --mode compare
 ---
 
 ## 4. 生成顶刊风格图表（可选）
-
-仓库内保留了用于论文出图的脚本（输出会写入本地 `figures_journal/`，默认不提交）：
 
 ```bash
 python3 scripts/export_journal_figures.py
